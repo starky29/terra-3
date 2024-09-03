@@ -151,7 +151,7 @@ resource "yandex_compute_instance" "storage" {
 
 ## Задание 4.
 
-Для корректной работы пришлось в yandex_compute_instance storage добавить  ``` count = 1 ```
+Для корректной работы пришлось в yandex_compute_instance storage добавить  ``` count = 1 ```, а так же в предыдущих заданиях забыл добавить параметр nat в yandex_compute_instance's storage и web, для корректного отображения адресса в инвентори файле добавил эти параметры.
 ### ansible.tf:
 
 ```
