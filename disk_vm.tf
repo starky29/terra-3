@@ -1,9 +1,15 @@
-resource "yandex_compute_instance" "web" {
-  depends_on = [yandex_compute_instance.db]
+resource "yandex_compute_disk" "disks" {
+  count = 3
 
-  count = var.counts
+  name     = "disk-${count.index}"
+  type     = var.disks_resources.disk_type
+  size     = var.disks_resources.disk_size
+}
 
-  name        = "${var.vms_name}-${count.index + 1}"
+resource "yandex_compute_instance" "storage" {
+  count = 1
+  name        = var.vms_name_storage
+  depends_on = [ yandex_compute_disk.disks ]
   platform_id = var.vms_resources.platform_id
 
   resources {
@@ -11,15 +17,17 @@ resource "yandex_compute_instance" "web" {
     memory        = var.vms_resources.memory
     core_fraction = var.vms_resources.core_fraction
   }
-
   boot_disk {
     initialize_params {
       image_id = data.yandex_compute_image.ubuntu.image_id
-      type     = var.vms_resources.disk_type
-      size     = var.vms_resources.disk_size
     }
   }
-
+  dynamic secondary_disk {
+    for_each = yandex_compute_disk.disks[*].id
+      content {
+        disk_id = secondary_disk.value
+      }
+  }
   metadata = {
     serial-port-enable = 1
     ssh-keys           = local.ssh_key
@@ -29,7 +37,6 @@ resource "yandex_compute_instance" "web" {
 
   network_interface {
     subnet_id = yandex_vpc_subnet.develop.id
-    security_group_ids = [yandex_vpc_security_group.example.id]
     nat = var.vms_resources.nat
   }
   allow_stopping_for_update = true

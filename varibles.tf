@@ -37,17 +37,17 @@ variable "vms_name" {
   description = "VMs names"
 }
 
+variable "vms_name_storage" {
+  type = string
+  default = "storage"
+  description = "VMs names"
+}
 
 variable "vm_family" {
   type        = string
   default     = "ubuntu-2004-lts"
   description = "famili disttro"
 }
-# variable "sec_gp_id " {
-#   type = string
-#   default = "enp0lkf7lbusjuhi4qkp"
-#   description = "security groupe id"
-# }
 
 variable "vms_resources" {
     type    = object({
@@ -69,6 +69,18 @@ variable "vms_resources" {
         disk_size=5
         preemptible=true
         nat=true
+    }
+    description = "VMs resources"
+}
+
+variable "disks_resources" {
+    type    = object({
+        disk_type = string
+        disk_size = number
+    })
+    default = {
+        disk_type="network-hdd"
+        disk_size=1
     }
     description = "VMs resources"
 }
