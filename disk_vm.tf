@@ -7,7 +7,7 @@ resource "yandex_compute_disk" "disks" {
 }
 
 resource "yandex_compute_instance" "storage" {
-  count = 1
+  # count = 1
   name        = var.vms_name_storage
   depends_on = [ yandex_compute_disk.disks ]
   platform_id = var.vms_resources.platform_id
